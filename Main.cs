@@ -9,7 +9,7 @@ namespace Entry
             {
                 Console.Clear();
                 if(nonValidInput){Console.WriteLine("sorry that was not a valid input");nonValidInput = false;}
-                Console.Write("Please select the part you would like to run simply typing the part number or exit:");
+                Console.Write("Please select the part you would like to run simply by typing the part number or exit:");
                 string part = Console.ReadLine();
                 part = part.Replace(",", ".");
                 part = part.ToLower();
@@ -41,7 +41,7 @@ namespace Entry
                         Part6.LoopingProblems.LoopingMenu();
                         break;
                     case("8"):
-                        Part8.HangMan.Game();
+                        Part8.HangMan.SortWordListIntoDifficulty();
                         break;
                     default:
                         nonValidInput = true;
