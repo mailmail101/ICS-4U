@@ -41,7 +41,7 @@ namespace Entry
                         Part6.LoopingProblems.LoopingMenu();
                         break;
                     case("8"):
-                        Part8.HangMan.SortWordListIntoDifficulty();
+                        Part8.HangMan.MainGameLoop();
                         break;
                     default:
                         nonValidInput = true;

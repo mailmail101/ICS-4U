@@ -2,9 +2,107 @@ namespace Part8
 {
 public static class HangMan
 {
-    public static void Game()
+    public static void MainGameLoop()
     {
-        
+        bool nonValidInput = false;
+        SortWordListIntoDifficulty();
+        while(true)
+            {
+                Console.Clear();
+                if(nonValidInput){Console.WriteLine("sorry that was not a valid input");nonValidInput = false;}
+                Console.Write($"Welcome to hangman to exit to home type home to end program type exit\nTo Add more words to game open word list unsorted and add each word on a separate line\nPlease enter what difficulty you would like to play \nEasy:\nNormal:\nHard:\nImpossible:\nCustom: ");
+                string navagation = Console.ReadLine();
+                navagation = navagation.Replace("\'", "");
+                navagation = navagation.Replace(" ", "");
+                navagation = navagation.ToLower();
+                switch(navagation)
+                {
+                    case("home"):
+                        return;
+                    case("exit"):
+                        Environment.Exit(0);
+                        break;
+                    case("easy"):
+                        Game(RandomWord(0));
+                        break;
+                    case("normal"):
+                        Game(RandomWord(1));
+                        break;
+                    case("hard"):
+                        Game(RandomWord(2));
+                        break;
+                    case("impossible"):
+                        Game(RandomWord(3));
+                        break;
+                    case("custom"):
+                        Console.Clear();
+                        Console.Write("Please enter the hang man word: ");
+                        string secretWord = null;
+                        while (true)
+                        {
+                            var key = System.Console.ReadKey(true);
+                            if (key.Key == ConsoleKey.Enter)
+                                break;
+                            secretWord += key.KeyChar;
+                        }
+                        Game(secretWord);
+                        break;
+                    default:
+                        nonValidInput = true;
+                        break;
+                }
+            }
+    }
+    public static void Game(string secretWord)
+    {
+        secretWord = secretWord.Replace(" ", "");
+        secretWord = secretWord.Replace("   ", "");
+        int numberOfIncorrectGuesses = 0;
+        string displayWord = new String('_' , secretWord.Length);
+        List<string> gussedLetters = new List<string>();
+        string currentGuess = "";
+        while (numberOfIncorrectGuesses != 7)
+        {
+            currentGuess = "";
+            while(!(currentGuess.Length == 1 && !gussedLetters.Contains(currentGuess)))
+            {
+                Console.Clear();
+                if(gussedLetters.Contains(currentGuess)){Console.WriteLine($"You allready guessed {currentGuess}");}
+                DrawHangMan(numberOfIncorrectGuesses);
+                Console.Write($"You have {7 - numberOfIncorrectGuesses} gueses left and have guessed: ");
+                foreach(string letter in gussedLetters) {Console.Write($" {letter}");}
+                Console.Write("\n    ");
+                foreach(char letter in displayWord) {Console.Write($" {letter}");}
+                Console.Write("\nPlease enter a single letter to guess: ");
+                currentGuess = Console.ReadLine();
+            }
+            if(secretWord.Contains(currentGuess)) 
+            {
+                for (int index = 0; index < secretWord.Length; index++)
+                {
+                    if (secretWord[index] == currentGuess[0]) {displayWord = displayWord.Remove(index, 1).Insert(index, currentGuess);}
+                } 
+            }
+            if(secretWord == displayWord)
+            {
+                Console.Clear();
+                DrawHangMan(numberOfIncorrectGuesses);
+                Console.Write($"You have {7 - numberOfIncorrectGuesses} gueses left and have guessed: ");
+                foreach(string letter in gussedLetters) {Console.Write($" {letter}");}
+                Console.Write("\nThe word was ");
+                Console.Write(secretWord);
+                Console.WriteLine("\nGood job you lived to see another day");
+                Console.Write("press enter to contine:");
+                Console.ReadLine();
+                return;
+            }
+            else{numberOfIncorrectGuesses ++;}
+            gussedLetters.Add(currentGuess);
+        }
+        Console.WriteLine("Sorry you died");
+        Console.WriteLine($"The answer is {secretWord}");
+        Console.Write("press enter to contine:");
+        Console.ReadLine();
     }
     private static string RandomWord(int difficulty)
     {
@@ -13,16 +111,16 @@ public static class HangMan
         switch(difficulty)
         {
             case(0):
-                words = File.ReadAllLines("WordListEasy.txt").ToList<string>();             
+                words = File.ReadAllLines("Part8HangMan/WordListEasy.txt").ToList<string>();             
                 return words[random.Next(0, words.Count)];
             case(1):
-                words = File.ReadAllLines("WordListNormal.txt").ToList<string>();             
+                words = File.ReadAllLines("Part8HangMan/WordListNormal.txt").ToList<string>();             
                 return words[random.Next(0, words.Count)]; 
             case(2):
-                words = File.ReadAllLines("WordListHard.txt").ToList<string>();             
+                words = File.ReadAllLines("Part8HangMan/WordListHard.txt").ToList<string>();             
                 return words[random.Next(0, words.Count)];   
             case(3):
-                words = File.ReadAllLines("WordListImpossible.txt").ToList<string>();             
+                words = File.ReadAllLines("Part8HangMan/WordListImpossible.txt").ToList<string>();             
                 return words[random.Next(0, words.Count)];   
             default:
                 throw new Exception($"Difficulty {difficulty} does not exist");
